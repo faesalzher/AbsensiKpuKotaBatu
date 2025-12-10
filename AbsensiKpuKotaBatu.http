@@ -1,0 +1,6 @@
+@AbsensiKpuKotaBatu_HostAddress = http://localhost:5260
+
+GET {{AbsensiKpuKotaBatu_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
