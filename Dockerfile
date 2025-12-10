@@ -4,14 +4,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy entire repository
+# Copy everything
 COPY . .
 
 # Restore
-RUN dotnet restore "./AbsensiKpuKotaBatu.API/AbsensiKpuKotaBatu.API.csproj"
+RUN dotnet restore "./AbsensiKpuKotaBatu.csproj"
 
 # Publish
-RUN dotnet publish "./AbsensiKpuKotaBatu.API/AbsensiKpuKotaBatu.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "./AbsensiKpuKotaBatu.csproj" -c Release -o /app/publish
 
 # =========================
 # 2. RUNTIME STAGE
@@ -21,8 +21,9 @@ WORKDIR /app
 
 COPY --from=build /app/publish .
 
-# Render uses PORT=10000
+# Render requires the app to bind to PORT=10000
 ENV ASPNETCORE_URLS=http://+:10000
+
 EXPOSE 10000
 
-ENTRYPOINT ["dotnet", "AbsensiKpuKotaBatu.API.dll"]
+ENTRYPOINT ["dotnet", "AbsensiKpuKotaBatu.dll"]
