@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IConfiguration _configuration;
 
-    public AuthController(AppDbContext context)
+    public AuthController(AppDbContext context, IConfiguration configuration)
     {
         _context = context;
+        _configuration = configuration;
     }
 
 [Authorize]
@@ -37,5 +40,30 @@ public async Task<IActionResult> Profile()
 
     return Ok(profile);
 }
+
+    [HttpGet("{guid}")]
+    public async Task<IActionResult> GetUser(string guid)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Guid == guid);
+
+        if (user == null)
+            return NotFound(new { message = "User not found" });
+
+        return Ok(user);
+    }
+
+
+    [HttpGet("config-test")]
+    public IActionResult ConfigTest()
+    {
+        var jwt = _configuration["Supabase:JwtSecret"];
+        var conn = _configuration.GetConnectionString("DefaultConnection");
+
+        return Ok(new
+        {
+            JwtLength = jwt?.Length ?? 0,
+            ConnectionStringEmpty = string.IsNullOrEmpty(conn)
+        });
+    }
 
 }

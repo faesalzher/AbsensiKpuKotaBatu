@@ -8,5 +8,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Profile> Profiles { get; set; }
+    public DbSet<User> Users { get; set; }
 
 }
